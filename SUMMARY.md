@@ -7,10 +7,11 @@
 * [💡 What we do](overview/what-we-do.md)
 * [✨ Our Features](overview/our-features.md)
 
-## Product Guides
+## Infra
 
-* [📪 Making a post](product-guides/making-a-post.md)
-* [📎 Understanding Projects](product-guides/understanding-projects.md)
+* [Kafka](infra/kafka.md)
+* [📪 Making a post](infra/making-a-post.md)
+* [📎 Understanding Projects](infra/understanding-projects.md)
 
 ## Fundamentals
 
