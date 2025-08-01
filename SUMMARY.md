@@ -9,7 +9,7 @@
 
 ## Infra
 
-* [Kafka](infra/kafka/README.md)
+* [Kafka](infra/kafka.md)
   * [Introduction](infra/kafka/introduction.md)
 * [📪 Making a post](infra/making-a-post.md)
 * [📎 Understanding Projects](infra/understanding-projects.md)
