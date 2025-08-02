@@ -11,6 +11,7 @@
 
 * [Kafka](infra/kafka.md)
   * [Introduction](infra/kafka/introduction.md)
+  * [Settings](infra/kafka/settings.md)
 * [📪 Making a post](infra/making-a-post.md)
 * [📎 Understanding Projects](infra/understanding-projects.md)
 
