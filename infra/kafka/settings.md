@@ -90,7 +90,33 @@ kafka-server-start /opt/homebrew/etc/kafka/server.properties
 kafka-topics --create --replication-factor 1 --partitions 1 --topic test --bootstrap-server localhost:9092
 ```
 
-d
+
+
+
+
+
+
+## 토픽에 메시지 쓰기
+
+```
+kafka-console-producer --bootstrap-server localhost:9092 --topic test
+Test Message 1
+Test message 2
+```
+
+test 토픽에 메시지를 쓴다. 프로듀서 멈추기는 ^C
+
+```
+/kafka-console-consumer --bootstrap-server localhost:9092 --topic test --from-beginning
+Test Message 1
+Test message 2
+^C
+Processed a total of 2 messages
+```
+
+test 토픽에서 메시지 읽기.
+
+방금 test 토픽에 쓴 Test Message 1, Test Message 2 가 출력된다면 잘 된거다.
 
 
 
