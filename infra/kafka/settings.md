@@ -120,3 +120,15 @@ test 토픽에서 메시지 읽기.
 
 
 
+
+
+
+
+## 하드웨어 적 고려사항
+
+* CPU
+
+CPU Bound Application과 I/O Bound Application중 카프카는 데이터 입출력 작업에 치중되어 있기때문에 I/O Bound Application에 가깝다. 그렇기때문에 CPU 성능이 많이 요구되지는 않는다.
+
+
+
