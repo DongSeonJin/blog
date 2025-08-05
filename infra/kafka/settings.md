@@ -4,6 +4,8 @@
 
 카프카 최신 버전은 자바8과 11을 모두 지원한다.
 
+카프카4.0 부터 주키퍼는 지원을 중단했기 때문에 KRAFT 로 대체 한다.
+
 
 
 {% embed url="https://www.oracle.com/kr/java/technologies/downloads/#jdk21-mac" %}
@@ -13,47 +15,52 @@
 
 
 ```
-brew install zookeeper
-
-brew services start zookeeper
-
-zkCli ls /
+cd /opt/homebrew/etc/kafka
 ```
 
-zookeeper 를 설치하고 kCli ls / 입력하여 정상적으로 실행 중인지 확인한다.\
+&#x20;위 경로로 이동하여 servier.properties 파일을 수정해주자.
 
+```
+controller.quorum.voters=1@localhost:9093
+```
+
+&#x20;파일 안에 추가
+
+```
+kafka-storage random-uuid
+```
+
+Kraft 모드는 클러스터를 식별할 고유 ID가 필요하다. 위 명령어로 ID를 생성하고 복사해놓자.
+
+```
+kafka-storage format -t <YOUR_CLUSTER_ID> -c <CONFIG_FILE_PATH>/server.properties
+```
+
+설정이 완료되면, 생성한 클러스터 ID를 사용하여 카프카 데이터 디렉토리를 KRaft용으로 포맷해야 한다. 이 과정은 클러스터 생성 시 단 한 번만 수행된다.
+
+
+
+{% columns %}
+{% column width="58.333333333333336%" %}
+
+{% endcolumn %}
+
+{% column %}
+
+{% endcolumn %}
+{% endcolumns %}
 
 ```
 brew install telnet
 
-telnet localhost 2181
+telnet localhost 9093
 
+# 주키퍼 서버 상태 체크 명령어
 srvr
-```
-
-telnet 접속 후 srvr 입력시 주키퍼 버전, 지연시간, 시션 수, 노드 상태 등 다양한 정보를 볼 수 있다. :arrow\_down:
 
 ```
-> telnet localhost 2181
-Trying ::1...
-Connected to localhost.
-Escape character is '^]'.
-srvr
-Zookeeper version: 3.9.3-${mvngit.commit.id}, built on 2024-10-24 22:41 UTC
-Latency min/avg/max: 0/5.5/15
-Received: 9
-Sent: 8
-Connections: 1
-Outstanding: 0
-Zxid: 0x6
-Mode: standalone
-Node count: 5
-Connection closed by foreign host.
-```
 
-
-
-
+&#x20;&#x20;
 
 ## 카프카 설치
 
