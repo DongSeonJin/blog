@@ -2,26 +2,15 @@
 
 * [👋 Welcome to A Product](README.md)
 
-## Overview
+## LANGUAGE
 
-* [💡 What we do](overview/what-we-do.md)
-* [✨ Our Features](overview/our-features.md)
+* [Java](language/java/README.md)
+  * [orElse, orElseGet 차이](language/java/orelse-orelseget.md)
+  * [Checked, Unchecked Exception](language/java/checked-unchecked-exception.md)
 
 ## Infra
 
 * [Kafka](infra/kafka.md)
   * [Introduction](infra/kafka/introduction.md)
   * [Settings](infra/kafka/settings.md)
-* [📪 Making a post](infra/making-a-post.md)
-* [📎 Understanding Projects](infra/understanding-projects.md)
-
-## Fundamentals
-
-* [🛠️ Getting set up](fundamentals/getting-set-up/README.md)
-  * [📝 Setting permissions](fundamentals/getting-set-up/setting-permissions.md)
-  * [🧑 Inviting Members](fundamentals/getting-set-up/inviting-members.md)
-
-## Use Cases
-
-* [🎨 For Designers](use-cases/for-designers.md)
-* [🖥️ For Developers](use-cases/for-developers.md)
+* [💽 Nginx 포트 설정](infra/nginx.md)

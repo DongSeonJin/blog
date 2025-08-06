@@ -4,7 +4,7 @@
 
 카프카 최신 버전은 자바8과 11을 모두 지원한다.
 
-카프카4.0 부터 주키퍼는 지원을 중단했기 때문에 KRAFT 로 대체 한다.
+책은 주키퍼 기반으로 되어있지만, 카프카4.0 부터 주키퍼는 지원을 중단했기 때문에 Kraft로 대체 한다.
 
 
 
@@ -18,7 +18,7 @@
 cd /opt/homebrew/etc/kafka
 ```
 
-&#x20;위 경로로 이동하여 servier.properties 파일을 수정해주자.
+&#x20;위 경로로 이동하여 server.properties 파일을 수정해주자.
 
 ```
 controller.quorum.voters=1@localhost:9093
@@ -36,31 +36,11 @@ Kraft 모드는 클러스터를 식별할 고유 ID가 필요하다. 위 명령�
 kafka-storage format -t <YOUR_CLUSTER_ID> -c <CONFIG_FILE_PATH>/server.properties
 ```
 
-설정이 완료되면, 생성한 클러스터 ID를 사용하여 카프카 데이터 디렉토리를 KRaft용으로 포맷해야 한다. 이 과정은 클러스터 생성 시 단 한 번만 수행된다.
+설정이 완료되면, 생성한 클러스터 ID를 사용하여 카프카 데이터 디렉토리를 Kraft용으로 포맷해야 한다. 이 과정은 클러스터 생성 시 단 한 번만 수행된다.
 
 
 
-{% columns %}
-{% column width="58.333333333333336%" %}
 
-{% endcolumn %}
-
-{% column %}
-
-{% endcolumn %}
-{% endcolumns %}
-
-```
-brew install telnet
-
-telnet localhost 9093
-
-# 주키퍼 서버 상태 체크 명령어
-srvr
-
-```
-
-&#x20;&#x20;
 
 ## 카프카 설치
 
@@ -123,7 +103,7 @@ Processed a total of 2 messages
 
 test 토픽에서 메시지 읽기.
 
-방금 test 토픽에 쓴 Test Message 1, Test Message 2 가 출력된다면 잘 된거다.
+방금 test 토픽에 쓴 Test Message 1, Test Message 2 가 출력 될 것이다.
 
 
 
