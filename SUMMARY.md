@@ -13,4 +13,5 @@
 * [Kafka](infra/kafka.md)
   * [Introduction](infra/kafka/introduction.md)
   * [Settings](infra/kafka/settings.md)
+  * [Producer](infra/kafka/producer.md)
 * [💽 Nginx 포트 설정](infra/nginx.md)
