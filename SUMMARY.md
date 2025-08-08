@@ -13,5 +13,6 @@
 * [Kafka](infra/kafka.md)
   * [Introduction](infra/kafka/introduction.md)
   * [Settings](infra/kafka/settings.md)
-  * [Producer](infra/kafka/producer.md)
+  * [Producer and Consumer](infra/kafka/producer-and-consumer/README.md)
+    * [Producer](infra/kafka/producer-and-consumer/producer.md)
 * [💽 Nginx 포트 설정](infra/nginx.md)
