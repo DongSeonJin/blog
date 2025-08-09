@@ -81,7 +81,45 @@ delivery.timeout.ms >= linger.ms + retry.backoff.ms + request.timeout.ms
 
 
 
-&#x20; &#x20;
+
+
+## 스프링부트에  프로듀서 설정하기
+
+```
+spring:
+  application:
+    name: kafka-practice
+
+  kafka:
+    bootstrap-servers: localhost:9092 # 1. 카프카 클러스터 접속 주소
+
+    # 2. 프로듀서(Producer) 설정
+    producer:
+      # 메시지 Key/Value를 바이트로 변환하는 직렬화(Serializer) 클래스 지정
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+```
+
+* application.yml 파일을 위와 같이 설정해주자
+
+
+
+```
+@Service
+@RequiredArgsConstructor
+public class KafkaProducerService {
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private static final String TOPIC_NAME = "my-topic";
+
+    public void sendMessage(String message) {
+        System.out.println("Sending message: " + message);
+        kafkaTemplate.send(TOPIC_NAME, message);
+    }
+}
+```
+
+
 
 
 

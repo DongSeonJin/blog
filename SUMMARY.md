@@ -15,4 +15,5 @@
   * [Settings](infra/kafka/settings.md)
   * [Producer and Consumer](infra/kafka/producer-and-consumer/README.md)
     * [Producer](infra/kafka/producer-and-consumer/producer.md)
+    * [Consumer](infra/kafka/producer-and-consumer/consumer.md)
 * [💽 Nginx 포트 설정](infra/nginx.md)
