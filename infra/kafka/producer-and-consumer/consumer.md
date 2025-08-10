@@ -18,3 +18,20 @@ description: 카프카 컨슈머
 >
 > 하나의 토픽이 다수의 파티션으로 나뉘어 있을 경우, 컨슈머 그룹 내의 컨슈머들은 각기 다른 파티션을 할당받아 병렬로 메시지를 처리한다. 이를 통해 소비 처리량을 수평적으로 확장할 수 있다.
 
+
+
+
+
+## Springboot 컨슈머 설정
+
+```
+# 3. 컨슈머(Consumer) 설정
+consumer:
+  # 컨슈머 그룹 ID (필수)
+  group-id: my-group
+  # 브로커로부터 받은 바이트를 객체로 변환하는 역직렬화(Deserializer) 클래스 지정
+  key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  # (옵션) 처음 연결 시 읽을 오프셋 위치 (earliest: 가장 오래된 메시지부터)
+  auto-offset-reset: earliest
+```
