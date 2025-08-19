@@ -62,6 +62,42 @@ _리밸런스에는 컨슈머 그룹이 사용하는 파티션 할당 전략에 
 
 
 
+## 스프링부트에서 컨슈머 설정하기
+
+```yaml
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: my-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+```
+
+* application.yml 파일을 위와 같이 설정해준다.
+
+```java
+@Service
+public class KafkaConsumerService {
+
+    private static final String TOPIC_NAME = "test-topic";
+    private static final String GROUP_ID = "my-group";
+
+    @KafkaListener(topics = TOPIC_NAME, groupId = GROUP_ID)
+    public void listen(String message) {
+        System.out.println("Received message: " + message);
+    }
+}
+```
+
+* GROUP\_ID 는 KafkaConsumer 인스턴스가 속하는 컨슈머 그룹을 지정하는 속성이다.
+
+
+
+
+
+
+
 
 
 
