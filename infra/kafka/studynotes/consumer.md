@@ -22,7 +22,7 @@ description: 카프카 컨슈머
 
 
 
-## Springboot 컨슈머 설정
+## Spring Boot 컨슈머 설정
 
 ```
 # 3. 컨슈머(Consumer) 설정
