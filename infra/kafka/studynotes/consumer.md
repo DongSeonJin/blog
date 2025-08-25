@@ -24,7 +24,7 @@ description: 카프카 컨슈머
 
 ## Spring Boot 컨슈머 설정
 
-```
+```yaml
 # 3. 컨슈머(Consumer) 설정
 consumer:
   # 컨슈머 그룹 ID (필수)
@@ -240,7 +240,7 @@ _카프카  리밸런스 리스너(Rebalance Listener)는 컨슈머 그룹 내�
 
 &#xC774;_&#xB97C; 통해 컨슈머는 파티션을 넘겨주기 직전이나 새로 할당받은 직후에 안전한 마무리 작업이나 초기화 작업을 수행할 수 있다._
 
-### 리밸런스 리스너는 주로 두 가지 상황에 호출되는 메서드를 정의한다.
+#### 리밸런스 리스너는 주로 두 가지 상황에 호출되는 메서드를 정의한다.
 
 1. `onPartitionsRevoked(Collection<TopicPartition> partitions)`
    * 호출 시점: 리밸런스가 시작되기 직전, 즉 컨슈머가 기존에 할당받았던 파티션의 소유권을 잃기 바로 전에 호출된다.
@@ -263,6 +263,82 @@ _카프카  리밸런스 리스너(Rebalance Listener)는 컨슈머 그룹 내�
 
 
 
+
+## 폴링 루프를 벗어나는 방법
+
+&#x20;순수 자바 환경에서는 무한 루프에서 폴링을 수행할 때 안전하게 종료하기 위해서는 `consumer.wakeup()` 을 호출하여 컨슈머를 안전하게 종료시켜야 한다.
+
+`wakeup()` 메서드는 다른 스레드에서 `poll()` 메서드를 호출하여 대기(blocking) 중인 컨슈머를 즉시 깨울 때 사용한다.&#x20;
+
+
+
+### ShutdownHook 예시 :arrow\_down:   &#x20;
+
+```java
+// 프로그램이 종료될 때 이 스레드가 실행된다.
+Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+    System.out.println("Starting exit...");
+    // 컨슈머의 wakeup() 메서드를 호출하여 안전하게 종료시킨다.
+    worker.shutdown();
+    try {
+        // 컨슈머 스레드가 완전히 종료될 때까지 기다린린다.
+        consumerThread.join();
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    System.out.println("Application has been shut down.");
+}));
+```
+
+
+
+```java
+@Override
+public void run() {
+    try {
+        // 지속적으로 데이터를 폴링한다.
+        while (true) {
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+            for (ConsumerRecord<String, String> record : records) {
+                System.out.printf("Topic: %s, Partition: %d, Offset: %d, Key: %s, Value: %s%n",
+                        record.topic(), record.partition(), record.offset(), record.key(), record.value());
+            }
+        }
+    } catch (WakeupException e) {
+        // wakeup()이 호출되면 poll() 메서드는 이 예외를 던진다.
+        // 정상적인 종료 신호이므로 무시하고 루프를 빠져나간다.
+        System.out.println("WakeupException! Consumer will be shut down.");
+    } finally {
+        // 컨슈머 리소스를 안전하게 닫는다.
+        consumer.close();
+        System.out.println("Consumer is now gracefully closed.");
+    }
+}
+```
+
+* 사용자가 Ctrl + C 를 누르거나, 프로그램이 종료되어 ShutdownHook이 동작한다.
+* wakeup() 이 호출되고, consumer.poll()은 wakeup() 호출을 감지하는 즉시, `WakeupException`을 던지며 즉시 깨어난다.
+* `finally` 블록에서 `consumer.close()`를 호출하여 리소스를 깔끔하게 정리하고 스레드를 종료한다.
+
+
+
+> :bulb: Spring Boot 환경에서는 `@KafkaListener`를 사용하면 대부분의 경우 `wakeup()`을 직접 호출할 필요가 없다. 스프링이 애플리케이션 종료 시 자동으로 "우아한 종료(Graceful Shutdown)"를 처리해주기 때문이다.
+>
+> 물론, 관리자 API를 통해 특정 리스너를 동적으로 중지시키거나 재시작해야 하는 특별한 경우도 있다. 이럴 때는 `KafkaListenerEndpointRegistry`를 사용하여 리스너 컨테이너를 직접 제어할 수 있다.&#x20;
+
+### Spring Boot에서 활용 예시 :arrow\_down:
+
+```java
+// 특정 리스너를 중지시키는 메서드
+public void stopListener() {
+    System.out.println("Stopping the Kafka listener...");
+    // "my-specific-listener" ID를 가진 리스너 컨테이너를 중지시킵니다.
+    registry.getListenerContainer("my-specific-listener").stop();
+    System.out.println("Listener stopped.");
+}
+```
+
+* `KafkaListenerEndpointRegistry`를 주입받아 `id`로 특정 리스너 컨테이너를 가져와 `stop()` 메서드를 호출한다. 이 `stop()` 메서드가 `wakeup()`을 호출하여 안전하게 리스너를 중지시킨다.
 
 
 
