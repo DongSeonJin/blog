@@ -16,4 +16,5 @@
   * [StudyNotes](infra/kafka/studynotes/README.md)
     * [Producer](infra/kafka/studynotes/producer.md)
     * [Consumer](infra/kafka/studynotes/consumer.md)
+    * [AdminClient](infra/kafka/studynotes/adminclient.md)
 * [💽 Nginx 포트 설정](infra/nginx.md)
