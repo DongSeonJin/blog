@@ -48,9 +48,17 @@ AdminClient의 `Options` 객체는 API 메서드를 호출할 때, 기본적인 
 
 
 
+## SpringBoot 에서 AdminClient 사용법
 
+```yaml
+  kafka:
+    bootstrap-servers: localhost:9093
+    admin:
+      properties:
+        request.timeout.ms: 5000 # 요청 타임아웃 5초
+```
 
-
+* application.yml 파일에 위와같이 추가해준다.&#x20;
 
 
 
