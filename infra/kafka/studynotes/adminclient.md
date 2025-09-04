@@ -62,7 +62,85 @@ AdminClient의 `Options` 객체는 API 메서드를 호출할 때, 기본적인 
 
 
 
+#### TOPIC 생성
 
+```java
+@Service
+@Slf4j
+@RequiredArgsConstructor
+class KafkaAdminServiceImpl implements KafkaAdminService {
+    private final KafkaAdmin kafkaAdmin;
+
+    @Override
+    public boolean createTopic(String topicName, int partitions, int replicationFactor) {
+        try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) { 
+            NewTopic newTopic = new NewTopic(topicName, partitions, (short) replicationFactor);
+
+            // 토픽 생성 옵션 (타임아웃 5초)
+            CreateTopicsOptions options = new CreateTopicsOptions().timeoutMs(5000);
+            // 토픽 생성 요청 및 결과 확인
+            adminClient.createTopics(Collections.singleton(newTopic), options).all().get();
+            log.info("토픽 '{}'이 성공적으로 생성되었습니다.", topicName);
+            return true;
+        } catch (ExecutionException | InterruptedException e) {
+            log.error("토픽 '{}' 생성 중 오류가 발생했습니다: {}", topicName, e.getMessage());
+            return false;
+        }
+    }
+}
+```
+
+* `application.yml`을 기반으로 자동 생성한 `KafkaAdmin` 빈을 주입받는다. 이 빈을 통해 `AdminClient` 인스턴스를 생성하고 관리할 수 있다.
+* `AdminClient`는 사용 후 반드시 `close()`를 호출하여 리소스를 해제해야 한다. `try-with-resources` 구문을 사용하면 자동으로 `close()`가 호출되어 편리하다.
+* `NewTopic` 객체로 토픽 정보를 정의하고 `createTopics()`를 호출하여 토픽을 생성한다.
+
+
+
+#### TOPIC 정보 조회
+
+```java
+@Override
+public void describeTopic(String topicName) {
+    try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+        DescribeTopicsResult result = adminClient.describeTopics(Collections.singleton(topicName));
+        Map<String, TopicDescription> topicInfo = result.allTopicNames().get();
+
+        log.info("토픽 정보 [{}]: {}", topicName, topicInfo);
+    } catch (ExecutionException | InterruptedException e) {
+        log.error("토픽 '{}' 정보 조회 중 오류가 발생했습니다: {}", topicName, e.getMessage());
+    }
+}
+```
+
+* `describeTopics()`를 호출하고, 비동기 결과(`KafkaFuture`)를 `.get()`으로 기다려 `TopicDescription` 정보를 받아온다.
+
+
+
+&#x20;TOPIC 목록 조회
+
+```java
+@Override
+public Set<String> getTopicList(String topicName) {
+    try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+        // listTopics()는 ListTopicsResult를 반환한다.
+        ListTopicsResult topics = adminClient.listTopics();
+        // .names()를 통해 토픽 이름 Set을 담은 KafkaFuture를 얻는다.
+        KafkaFuture<Set<String>> names = topics.names();
+        // .get()으로 결과를 기다려 실제 Set<String>을 가져온다.
+        Set<String> topicNames = names.get();
+
+        log.info("🔍 조회된 토픽 수: {}", topicNames.size());
+        return topicNames;
+    } catch (ExecutionException | InterruptedException e) {
+        if (e instanceof InterruptedException) {
+            Thread.currentThread().interrupt();
+        }
+        log.error("토픽 목록 조회 중 오류가 발생했습니다: {}", e.getMessage());
+        // 실패 시에는 null 대신 비어있는 컬렉션을 반환하는 것이 더 안전하다.
+        return Collections.emptySet();
+    }
+}
+```
 
 
 
