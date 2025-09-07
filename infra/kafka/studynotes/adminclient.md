@@ -96,6 +96,8 @@ class KafkaAdminServiceImpl implements KafkaAdminService {
 
 
 
+
+
 #### TOPIC 정보 조회
 
 ```java
@@ -112,7 +114,21 @@ public void describeTopic(String topicName) {
 }
 ```
 
-* `describeTopics()`를 호출하고, 비동기 결과(`KafkaFuture`)를 `.get()`으로 기다려 `TopicDescription` 정보를 받아온다.
+* `DescribeTopicsResult`  객체 안에는 키(토픽 이름), 토픽에 대한 상세 정보를 담은 Future 객체를 밸류로 하는 맵이 들어 있다.
+* `describeTopics()`를 호출하고, 비동기 결과(`KafkaFuture`)를 `.get()`으로 기다려 `TopicDescription` 정보를 받아온다. (.get()은 블로킹 방식)
+* `TopicDescription` 객체는 다음과 같은 상세 정보를 담고 있다.
+
+> `name()`: 토픽의 이름.
+>
+> `topicId()`: 클러스터 내에서 토픽을 식별하는 고유 ID.
+>
+> `isInternal()`: 카프카 내부에서 사용하는 토픽(예: `__consumer_offsets`)인지 여부.
+>
+> `partitions()`: 가장 중요한 정보로, `TopicPartitionInfo` 객체들의 리스트를 반환한다.
+
+* `whenComplete()` : 블로킹 방식인 .get() 과 달리 논블로킹 방식이다. 람다식을 인자로 받아 비동기 작업을 할 수 있고, 그 결과를 처리하기 위한 콜백 함수를 등록할 수 있다.
+
+
 
 
 
@@ -141,6 +157,40 @@ public Set<String> getTopicList(String topicName) {
     }
 }
 ```
+
+
+
+
+
+#### 비동기 방식 TOPIC 정보 조회
+
+```java
+@Override
+public void describeTopicAsync(String topicName) {
+    try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+        DescribeTopicsResult result = adminClient.describeTopics(Collections.singleton(topicName));
+        KafkaFuture<Map<String, TopicDescription>> future = result.allTopicNames();
+
+        // whenComplete 콜백 등록
+        future.whenComplete((topicInfoMap, throwable) -> {
+            if (throwable == null) {
+                TopicDescription description = topicInfoMap.get(topicName);
+                log.info("(Callback) 토픽 정보 [{}]: {}",  topicName, description);
+            } else {
+                log.error("(Callback) 토픽 '{}' 정보 조회 중 오류 발생: {}",  topicName, throwable.getMessage());
+            }
+        });
+    }
+}
+```
+
+* `whenComplete()` : 블로킹 방식인 .get() 과 달리 논블로킹 방식이다. 람다식을 인자로 받아 비동기 작업을 할 수 있고, 그 결과를 처리하기 위한 콜백 함수를 등록할 수 있다.
+
+
+
+
+
+
 
 
 
