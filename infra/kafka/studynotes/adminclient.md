@@ -132,7 +132,7 @@ public void describeTopic(String topicName) {
 
 
 
-&#x20;TOPIC 목록 조회
+#### &#x20;TOPIC 목록 조회
 
 ```java
 @Override
@@ -185,6 +185,31 @@ public void describeTopicAsync(String topicName) {
 ```
 
 * `whenComplete()` : 블로킹 방식인 .get() 과 달리 논블로킹 방식이다. 람다식을 인자로 받아 비동기 작업을 할 수 있고, 그 결과를 처리하기 위한 콜백 함수를 등록할 수 있다.
+
+
+
+
+
+
+
+
+
+### 설정관리 (ConfigResource)
+
+카프카 설정 관리는 `AdminClient`와 `ConfigResource` 객체를 활용하여 토픽이나 브로커 같은 대상의 설정을 코드로 직접 조회하고 바꾸는 것이다. 이를 사용하면 수동 작업 없이 설정 변경을 자동화할 수 있다.
+
+
+
+`ConfigResource`를 활용한 작업은 크게 두 가지다.
+
+* 설정 조회 (`describeConfigs`): `ConfigResource`로 대상을 지정해서 현재 설정값이 뭔지 전부 받아보는 작업이다. `retention.ms`(메시지 보관 기간)나 `cleanup.policy`(정리 정책) 같은 값들을 확인할 수 있다.
+* 설정 변경 (`alterConfigs`): `ConfigResource`로 대상을 지정하고, 바꾸고 싶은 설정값을 담아 보내는 작업이다. 이걸로 서비스 운영 중에 코드를 통해 특정 토픽의 설정을 동적으로 바꿀 수 있다.
+
+
+
+
+
+
 
 
 
